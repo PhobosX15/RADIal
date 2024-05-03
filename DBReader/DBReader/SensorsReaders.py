@@ -76,7 +76,7 @@ class CANReader():
             	messages.append({'timestamp':struct.unpack_from('Q', raw_data, 0)[0],
                              'ID':struct.unpack_from('I', raw_data, 8)[0],
                              'DATA':raw_data[12:20]})
-      
+                
         return messages
     
     def GetTimestamp(self,index):

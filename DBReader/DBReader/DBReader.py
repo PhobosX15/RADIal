@@ -91,16 +91,17 @@ class SyncReader():
         self.sensorsFilters = self.df['sensor'].unique()
         self.filters = []
         self.df_filtered = self.df
-        
+
         if(not self.silent):
-        	print('-------------------------------------------------------------------------')
-        	print('- Sensors available:')
-        	for s in self.dicts.keys():
-            		print('-    ',s)
-        	print('-')
-        	print('- You might use function "setSensorFilters" to select sensors you want to read!')
-        	print('-------------------------------------------------------------------------')
-        
+            print('-------------------------------------------------------------------------')
+            print('- Sensors available:')
+            
+            for s in self.dicts.keys():
+                print('-    ',s)
+
+            print('-')
+            print('- You might use function "setSensorFilters" to select sensors you want to read!')
+            print('-------------------------------------------------------------------------')
 
         self.readers={}
         for sensor in self.sensorsFilters:
@@ -222,8 +223,8 @@ class SyncReader():
             id_total = np.arange(len(self.table))
             self.id_valid = np.setdiff1d(id_total, id_to_del)
             if(not self.silent):
-            	print('Total tolerance errors: ',nb_tolerance/len(self.table)*100,'%')
-            	print('Total corrupted frames: ',nb_corrupted/len(self.table)*100,'%')
+                print('Total tolerance errors: ',nb_tolerance/len(self.table)*100,'%')
+                print('Total corrupted frames: ',nb_corrupted/len(self.table)*100,'%')
             self.table = self.table[self.id_valid]
 
 
@@ -300,7 +301,7 @@ class SyncReader():
             id_total = np.arange(len(self.table))
             id_to_keep = np.setdiff1d(id_total, id_to_del)
             if(not self.silent):
-            	print('Total tolerance errors: ',nb_tolerance/len(self.table)*100,'%')
+                print('Total tolerance errors: ',nb_tolerance/len(self.table)*100,'%')
             self.table = self.table[id_to_keep]
 
         else:
