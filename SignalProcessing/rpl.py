@@ -1,10 +1,11 @@
 import os
 #import cupy as cp
 import numpy as np
-import mkl_fft
+#import mkl_fft
 from scipy import signal
-import torch
+#import torch
 import math
+from scipy.fft import fft, ifft
 
 class CA_CFAR():
     """
@@ -140,13 +141,13 @@ class RadarSignalProcessing():
         complex_adc = self.__build_radar_frame(adc0,adc1,adc2,adc3)
     
         # 2- Remove DC offset
-        #complex_adc = complex_adc - np.mean(complex_adc, axis=(0,1))
+        complex_adc = complex_adc - np.mean(complex_adc, axis=(0,1))
 
         # 3- Range FFTs
-        range_fft = mkl_fft.fft(np.multiply(complex_adc,self.range_fft_coef),self.numSamplePerChirp,axis=0)
+        range_fft = fft(np.multiply(complex_adc,self.range_fft_coef),self.numSamplePerChirp,axis=0)
     
         # 4- Doppler FFts
-        RD_spectrums = mkl_fft.fft(np.multiply(range_fft,self.doppler_fft_coef),self.numChirps,axis=1)
+        RD_spectrums = fft(np.multiply(range_fft,self.doppler_fft_coef),self.numChirps,axis=1)
 
         if(self.method=='RD'):
             return RD_spectrums
