@@ -113,17 +113,17 @@ class RadarSignalProcessing():
         self.device = device
         if(self.device =='cuda'):
             if(self.lib=='CuPy'):
-                print('CuPy on GPU will be used to execute the processing')
+                #print('CuPy on GPU will be used to execute the processing')
                 cp.cuda.Device(0).use()
                 self.CalibMat = cp.array(self.CalibMat,dtype='complex64')
                 self.window = cp.array(self.AoA_mat['H'][0])
             else:
-                print('PyTorch on GPU will be used to execute the processing')
+                #print('PyTorch on GPU will be used to execute the processing')
                 self.CalibMat = torch.from_numpy(self.CalibMat).to('cuda')
                 self.window = torch.from_numpy(self.AoA_mat['H'][0]).to('cuda')
             
         else:
-            print('CPU will be used to execute the processing')
+            #print('CPU will be used to execute the processing')
             self.window = self.AoA_mat['H'][0]
             
         # Build hamming window table to reduce side lobs
