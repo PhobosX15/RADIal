@@ -15,26 +15,27 @@ def process_folder(file_path, folder):
     try:
         db = SyncReader(os.path.join(file_path, folder), tolerance=40000, silent=True)
    
-        for i in tqdm(range(len(db)), desc=f"Processing and Saving images {folder}", total=len(db)):
+        for i in range(len(db)):
             data = db.GetSensorData(i)
             RSP = RadarSignalProcessing('SignalProcessing\\CalibrationTable.npy',
-                                        method='RA',device='cpu')
+                                    method='RA',device='cuda', lib="PyTorch")
+            
             ra=RSP.run(data['radar_ch0']['data'],data['radar_ch1']['data'],
                     data['radar_ch2']['data'],data['radar_ch3']['data'])
+            
             ra = cv2.rotate(ra,cv2.ROTATE_180 )
+            
             plt.imsave(os.path.join('output\\ra', folder, "RADAR"+ str(i)+'.png'), ra)
-            plt.imsave(os.path.join('output\\images', folder, "RADAR"+ str(i)+'.png'),data['camera']['data'])
+            plt.imsave(os.path.join('output\\images', folder, "RGB"+ str(i)+'.png'),data['camera']['data'])
     except:
         print(f"PROBLEM: Folder {folder}")
 
 if __name__ == '__main__':
     freeze_support()
-    file_path = "C:\\Users\\nxg05733\\RADIAL-data" ## Replace with your path
+    file_path = "E:\\RADIal" ## Replace with your path
     folders = [f for f in os.listdir(file_path) if os.path.isdir(os.path.join(file_path, f))]
     folders_to_process = [(file_path, folder) for folder in folders]
-    print("Here")
-    with Pool(processes = 2) as pool:
-        print("Here2")
+    with Pool(processes = 12) as pool:
         pool.starmap(process_folder, folders_to_process)
 
     pool.close()
