@@ -6,12 +6,13 @@ import cv2
 from tqdm import tqdm
 import multiprocessing
 from multiprocessing import Pool, freeze_support
+import numpy as np
 
 def process_folder(file_path, folder):
     print(f"Staring for folder {folder}")
-    os.makedirs(os.path.join('output\\images', folder), exist_ok=True)
-    os.makedirs(os.path.join('output\\ra', folder), exist_ok=True)
-
+    """ os.makedirs(os.path.join('output\\images', folder), exist_ok=True)
+    os.makedirs(os.path.join('output\\ra', folder), exist_ok=True) """
+    os.makedirs(os.path.join('output\\ra_matrix', folder), exist_ok=True)
     try:
         db = SyncReader(os.path.join(file_path, folder), tolerance=40000, silent=True)
    
@@ -24,9 +25,11 @@ def process_folder(file_path, folder):
                     data['radar_ch2']['data'],data['radar_ch3']['data'])
             
             ra = cv2.rotate(ra,cv2.ROTATE_180 )
+            ra= ra[:,125:(ra.shape[1]-125)]
             
-            plt.imsave(os.path.join('output\\ra', folder, "RADAR"+ str(i)+'.png'), ra)
-            plt.imsave(os.path.join('output\\images', folder, "RGB"+ str(i)+'.png'),data['camera']['data'])
+            """ plt.imsave(os.path.join('output\\ra', folder, "RADAR"+ str(i)+'.png'), ra)
+            plt.imsave(os.path.join('output\\images', folder, "RGB"+ str(i)+'.png'),data['camera']['data']) """
+            np.save(os.path.join("output\\ra_matrix",folder,"RADAR"+str(i)+".npy"), ra)
     except:
         print(f"PROBLEM: Folder {folder}")
 

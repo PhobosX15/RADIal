@@ -3,7 +3,7 @@ import os
 import numpy as np
 #import mkl_fft
 from scipy import signal
-#import torch
+import torch
 import math
 from scipy.fft import fft, ifft
 
@@ -243,10 +243,8 @@ class RadarSignalProcessing():
                 Azimuth_spec = torch.abs(torch.matmul(self.CalibMat,MIMO_Spectrum))
                 Azimuth_spec = Azimuth_spec.reshape(self.AoA_mat['Signal'].shape[0],RD_spectrums.shape[0],RD_spectrums.shape[1])
                 RA_map = torch.sum(torch.abs(Azimuth_spec),axis=2)
-                # flip the axis, make horizontal axis the azimuth and vertical the range
-                # also make sure they start from 0 at the origin for both axis
-                RA_map = RA_map[:, ::-1]
-                return RA_map.detach().cpu().numpy() # transpose removed.
+
+                return RA_map.detach().cpu().numpy().transpose()
         
                 
     def __find_TX0_position(self,power_spectrum,range_bins,reduced_doppler_bins):        

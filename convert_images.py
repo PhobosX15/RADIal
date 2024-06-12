@@ -3,44 +3,82 @@ import os
 import ast
 import multiprocessing
 from multiprocessing import Pool, freeze_support
+import numpy as np
+import matplotlib.pyplot as plt
 # from output folder iterate through all the folders
 
-output = "output\\images"
-folders = [f for f in os.listdir(output) if os.path.isdir(os.path.join(output, f))]
 
-def resize_image(new_shape, folder, resized_folder):
+
+def resize_image( folder, resized_folder, output, type = "Image", new_shape = (512,501)):
     
     
     os.makedirs(os.path.join(resized_folder, folder), exist_ok=True)
-    for file in os.listdir(os.path.join(output, folder)):
-        if file.endswith(".png"):
-            # Open the image file
-            try:
-                img = cv2.imread(os.path.join(output, folder, file))
-                img = cv2.resize(img, new_shape)
-                cv2.imwrite(os.path.join(resized_folder, folder, file), img)
-
-            except Exception as e:
-                print(f"Error: {e} in {file}")
-                file_num = file[-5]
-                RADAR_NAME = "RADAR" + file_num+".png"
-                print(f"Folder: {folder}")
-                # delete the RADAR NAME in output\\ra\\folder
+    if type == "Image":
+        for file in os.listdir(os.path.join(output, folder)):
+            if file.endswith(".png"):
+                # Open the image file
                 try:
-                    os.remove(os.path.join("output\\ra", folder, RADAR_NAME))
-                except FileNotFoundError:
-                    print(f"File not found: {RADAR_NAME}")
+                    img = cv2.imread(os.path.join(output, folder, file))
+                    img = cv2.resize(img, new_shape)
+                    cv2.imwrite(os.path.join(resized_folder, folder, file), img)
+
+                except Exception as e:
+                    print(f"Error: {e} in {file}")
+                    file_num = file[-5]
+                    RADAR_NAME = "RADAR" + file_num+".png"
+                    print(f"Folder: {folder}")
+                    # delete the RADAR NAME in output\\ra\\folder
+                    try:
+                        os.remove(os.path.join("output\\ra", folder, RADAR_NAME))
+                    except FileNotFoundError:
+                        print(f"File not found: {RADAR_NAME}")
+    
+    else:
+        for file in os.listdir(os.path.join(output, folder)): 
+            if file.endswith(".npy"):
+                try:
+                    ra = np.load(os.path.join(output, folder,file))
+                    ra = normalize(ra)
+                    np.save(os.path.join(resized_folder,folder,file), ra)
+                  
+                
+                except Exception as e:
+                    print(f"Error: {e} in {file}")
+
+
+
+def normalize(image):
+    image = cv2.normalize(image, image, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
+    return image
 
 if __name__ == '__main__':
     freeze_support()
-    resized_folder = "resized"
+    # Do Radar first
+    print("Processing RADAR")
+    output = "output\\ra_matrix"
+    folders = [f for f in os.listdir(output) if os.path.isdir(os.path.join(output, f))]
+    resized_folder = "resized_2\\ra_matrix"
     os.makedirs(resized_folder, exist_ok=True)
-    os.makedirs(os.path.join(resized_folder, "images"), exist_ok=True)
-    new_shape = ast.literal_eval(input("Enter the new shape of the image (width, height): "))
-
-    folder_to_process = [(new_shape,folder, resized_folder) for folder in folders]
-    with Pool(processes= 2) as pool:
+    #os.makedirs(os.path.join(resized_folder, "images"), exist_ok=True)
+    folder_to_process = [(folder, resized_folder,output,"RADAR") for folder in folders]
+    with Pool(processes= 12) as pool:
         pool.starmap(resize_image, folder_to_process)
-
     pool.close()
     pool.join()
+    print("Done Processing RADAR")
+    """ # Processing Image     
+    print("Processing Images")   
+    new_shape = ast.literal_eval(input("Enter the new shape of the image (width, height): "))
+    output = "output\\images"
+    folders = [f for f in os.listdir(output) if os.path.isdir(os.path.join(output, f))]
+    resized_folder = "resized_2\\images"
+    os.makedirs(resized_folder, exist_ok=True)
+    #os.makedirs(os.path.join(resized_folder, "images"), exist_ok=True)
+    folder_to_process = [(folder, resized_folder,output,"Image",new_shape) for folder in folders]
+    with Pool(processes= 12) as pool:
+        pool.starmap(resize_image, folder_to_process)
+    pool.close()
+    pool.join() """
+    print("Done Processing Image")
+
+    
