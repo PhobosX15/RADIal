@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 
 
-def resize_image( folder, resized_folder, output, type = "Image", new_shape = (512,501)):
+def resize_image( folder, resized_folder, output, type = "Image", new_shape = (224,224)):
     
     
     os.makedirs(os.path.join(resized_folder, folder), exist_ok=True)
@@ -38,6 +38,7 @@ def resize_image( folder, resized_folder, output, type = "Image", new_shape = (5
             if file.endswith(".npy"):
                 try:
                     ra = np.load(os.path.join(output, folder,file))
+                    ra = cv2.resize(ra, new_shape)
                     ra = normalize(ra)
                     np.save(os.path.join(resized_folder,folder,file), ra)
                   
@@ -57,7 +58,7 @@ if __name__ == '__main__':
     print("Processing RADAR")
     output = "output\\ra_matrix"
     folders = [f for f in os.listdir(output) if os.path.isdir(os.path.join(output, f))]
-    resized_folder = "resized_2\\ra_matrix"
+    resized_folder = "resized_224\\ra_matrix"
     os.makedirs(resized_folder, exist_ok=True)
     #os.makedirs(os.path.join(resized_folder, "images"), exist_ok=True)
     folder_to_process = [(folder, resized_folder,output,"RADAR") for folder in folders]
@@ -66,19 +67,19 @@ if __name__ == '__main__':
     pool.close()
     pool.join()
     print("Done Processing RADAR")
-    """ # Processing Image     
+    # Processing Image     
     print("Processing Images")   
     new_shape = ast.literal_eval(input("Enter the new shape of the image (width, height): "))
     output = "output\\images"
     folders = [f for f in os.listdir(output) if os.path.isdir(os.path.join(output, f))]
-    resized_folder = "resized_2\\images"
+    resized_folder = "resized_224\\images"
     os.makedirs(resized_folder, exist_ok=True)
     #os.makedirs(os.path.join(resized_folder, "images"), exist_ok=True)
     folder_to_process = [(folder, resized_folder,output,"Image",new_shape) for folder in folders]
     with Pool(processes= 12) as pool:
         pool.starmap(resize_image, folder_to_process)
     pool.close()
-    pool.join() """
+    pool.join()
     print("Done Processing Image")
 
     
