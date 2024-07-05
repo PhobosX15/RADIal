@@ -12,9 +12,9 @@ def process_folder(file_path, folder):
     print(f"Staring for folder {folder}")
     """ os.makedirs(os.path.join('output\\images', folder), exist_ok=True)
     os.makedirs(os.path.join('output\\ra', folder), exist_ok=True) """
-    os.makedirs(os.path.join('output\\ra_matrix', folder), exist_ok=True)
+    os.makedirs(os.path.join('output_20K\\ra_matrix', folder), exist_ok=True)
     try:
-        db = SyncReader(os.path.join(file_path, folder), tolerance=40000, silent=True)
+        db = SyncReader(os.path.join(file_path, folder), tolerance=20000, silent=True)
    
         for i in range(len(db)):
             data = db.GetSensorData(i)
@@ -29,7 +29,7 @@ def process_folder(file_path, folder):
             
             """ plt.imsave(os.path.join('output\\ra', folder, "RADAR"+ str(i)+'.png'), ra)
             plt.imsave(os.path.join('output\\images', folder, "RGB"+ str(i)+'.png'),data['camera']['data']) """
-            np.save(os.path.join("output\\ra_matrix",folder,"RADAR"+str(i)+".npy"), ra)
+            np.save(os.path.join("output_20K\\ra_matrix",folder,"RGB"+str(i)+".npy"), ra)
     except:
         print(f"PROBLEM: Folder {folder}")
 
