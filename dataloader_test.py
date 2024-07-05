@@ -29,7 +29,7 @@ def process_folder(file_path, folder):
             
             """ plt.imsave(os.path.join('output\\ra', folder, "RADAR"+ str(i)+'.png'), ra)
             plt.imsave(os.path.join('output\\images', folder, "RGB"+ str(i)+'.png'),data['camera']['data']) """
-            np.save(os.path.join("output\\ra_matrix",folder,"RADAR"+str(i)+".npy"), ra)
+            np.save(os.path.join("output\\ra_matrix",folder,"RGB"+str(i)+".npy"), ra)
     except:
         print(f"PROBLEM: Folder {folder}")
 
