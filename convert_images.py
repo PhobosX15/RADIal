@@ -59,11 +59,7 @@ if __name__ == '__main__':
     new_shape = ast.literal_eval(input("Enter the new shape of the image (width, height): "))
     output = "/data/pavan/output/ra_matrix"
     folders = [f for f in os.listdir(output) if os.path.isdir(os.path.join(output, f))]
-<<<<<<< HEAD
     resized_folder = "resized_224_no_norm\\ra_matrix"
-=======
-    resized_folder = "/data/pavan/resized_384/ra_matrix"
->>>>>>> fa0c2c2a37be8f3743b57563d9679b63de5f6973
     os.makedirs(resized_folder, exist_ok=True)
     #os.makedirs(os.path.join(resized_folder, "images"), exist_ok=True)
     folder_to_process = [(folder, resized_folder,output,"RADAR", new_shape) for folder in folders]

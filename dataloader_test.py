@@ -10,26 +10,24 @@ import numpy as np
 
 def process_folder(file_path, folder):
     print(f"Staring for folder {folder}")
-    """ os.makedirs(os.path.join('output\\images', folder), exist_ok=True)
-    os.makedirs(os.path.join('output\\ra', folder), exist_ok=True) """
-    os.makedirs(os.path.join('output_20K\\ra_matrix', folder), exist_ok=True)
+    os.makedirs(os.path.join('output_20K\\images', folder),exist_ok=True)
+    #os.makedirs(os.path.join('output_20K\\ra_matrix', folder), exist_ok=True)
     try:
         db = SyncReader(os.path.join(file_path, folder), tolerance=20000, silent=True)
    
         for i in range(len(db)):
             data = db.GetSensorData(i)
-            RSP = RadarSignalProcessing('SignalProcessing\\CalibrationTable.npy',
+            """ RSP = RadarSignalProcessing('SignalProcessing\\CalibrationTable.npy',
                                     method='RA',device='cuda', lib="PyTorch")
             
             ra=RSP.run(data['radar_ch0']['data'],data['radar_ch1']['data'],
                     data['radar_ch2']['data'],data['radar_ch3']['data'])
             
             ra = cv2.rotate(ra,cv2.ROTATE_180 )
-            ra= ra[:,125:(ra.shape[1]-125)]
+            ra= ra[:,125:(ra.shape[1]-125)] """
             
-            """ plt.imsave(os.path.join('output\\ra', folder, "RADAR"+ str(i)+'.png'), ra)
-            plt.imsave(os.path.join('output\\images', folder, "RGB"+ str(i)+'.png'),data['camera']['data']) """
-            np.save(os.path.join("output_20K\\ra_matrix",folder,"RGB"+str(i)+".npy"), ra)
+            plt.imsave(os.path.join('output_20K\\images', folder, "RGB"+ str(i)+'.png'),data['camera']['data'])
+            #np.save(os.path.join("output_20K\\ra_matrix",folder,"RGB"+str(i)+".npy"), ra)
     except:
         print(f"PROBLEM: Folder {folder}")
 
@@ -41,6 +39,11 @@ if __name__ == '__main__':
     with Pool(processes = 12) as pool:
         pool.starmap(process_folder, folders_to_process)
 
-    pool.close()
-    pool.join()
+
+""" # without multiprocessing
+if __name__ == '__main__':
+    file_path = "E:\\RADIal" ## Replace with your path
+    folders = [f for f in os.listdir(file_path) if os.path.isdir(os.path.join(file_path, f))]
+    for folder in tqdm(folders):
+        process_folder(file_path, folder) """
 
